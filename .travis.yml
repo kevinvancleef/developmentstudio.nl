@@ -1,0 +1,15 @@
+language: php
+php:
+  - '7.1'
+os:
+  - linux
+services:
+  - docker
+env:
+  - OS_TYPE=centos OS_VERSION=7
+sudo: false
+install:
+  - composer install
+script:
+  - ./vendor/bin/phpunit ./tests/unit
+  - docker run -it -v $(pwd):/development centos:7 bash -c /development/scripts/build-rpm.sh
