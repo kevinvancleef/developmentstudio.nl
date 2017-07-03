@@ -12,4 +12,4 @@ install:
   - composer install
 script:
   - ./vendor/bin/phpunit ./tests/unit
-  - docker run -it -v $(pwd):/development centos:7 bash -c /development/scripts/build-rpm.sh
+  - docker run -v $(pwd):/developmentstudio centos:7 bash -c "/developmentstudio/scripts/build-rpm.sh $TRAVIS_BUILD_NUMBER"
