@@ -42,5 +42,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_localstatedir}/www/developmentstudio.nl
 
 %changelog
-* Tue May 23 2000 Kevin van Cleef <kevin@developmentstudio.nl> - 0.1-%{release}
+* Mon Jul 10 2017 Kevin van Cleef <kevin@developmentstudio.nl> - 0.1-%{release}
 - Initial package specification of development studio website.
