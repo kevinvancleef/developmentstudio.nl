@@ -10,7 +10,9 @@
             "email": "kevin@developmentstudio.nl"
         }
     ],
-    "require": {},
+    "require": {
+        "php": ">=7"
+    },
     "autoload-dev": {
         "psr-4": {
             "DevelopmentStudio\\": "src",
