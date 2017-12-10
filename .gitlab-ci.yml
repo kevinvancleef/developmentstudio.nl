@@ -1,0 +1,10 @@
+image: php:7.1
+
+deploy to production:
+  artifacts:
+    paths:
+      - public/
+  only:
+    - master
+  script:
+    - echo "Hallo!"
