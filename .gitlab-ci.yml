@@ -15,4 +15,4 @@ run unit tests:
   stage: test
   script:
     - composer install --dev
-    - ./vendor/bin/phpunit 
+    - ./vendor/bin/phpunit
