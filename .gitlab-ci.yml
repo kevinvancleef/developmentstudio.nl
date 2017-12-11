@@ -1,10 +1,18 @@
 image: php:7.1
 
-deploy to production:
-  artifacts:
-    paths:
-      - public/
-  only:
-    - master
+stages:
+  - test
+
+before_script:
+  - apt-get update
+  - apt-get install zip unzip
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - php composer-setup.php
+  - php -r "unlink('composer-setup.php');"
+  - mv composer.phar /usr/local/bin/composer
+
+run unit tests:
+  stage: test
   script:
-    - echo "Hallo!"
+    - composer install --dev
+    - ./vendor/bin/phpunit 
