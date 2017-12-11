@@ -2,6 +2,8 @@ image: php:7.1
 
 stages:
   - test
+  - build
+  - deploy
 
 before_script:
   - apt-get update
@@ -16,3 +18,23 @@ run unit tests:
   script:
     - composer install --dev
     - ./vendor/bin/phpunit
+
+build artifact:
+  stage: build
+  script:
+    - composer install --no-dev
+    - zip -r app.zip ./vendor ./public
+  only:
+    - master
+  artifacts:
+    paths:
+      - public/
+      - vendor/
+
+deploy to production:
+  stage: deploy
+  script:
+    - ls -lah
+  only:
+    - master
+
