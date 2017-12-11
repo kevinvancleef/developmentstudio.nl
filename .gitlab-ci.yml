@@ -1,8 +1,7 @@
 image: php:7.1
 
 stages:
-  - test
-  - build
+  - tests
   - deploy
 
 before_script:
@@ -13,14 +12,18 @@ before_script:
   - php -r "unlink('composer-setup.php');"
   - mv composer.phar /usr/local/bin/composer
 
-run unit tests:
-  stage: test
+run_unit_tests:
+  stage: tests
   script:
     - composer install --dev
     - ./vendor/bin/phpunit
 
-build artifact:
-  stage: build
+deploy_to_production:
+  environment:
+    name: production
+    url: http://www.developmentstudio.nl
+  stage: deploy
+  when: manual
   script:
     - composer install --no-dev
     - zip -r app.zip ./vendor ./public
@@ -30,11 +33,3 @@ build artifact:
     paths:
       - public/
       - vendor/
-
-deploy to production:
-  stage: deploy
-  script:
-    - ls -lah
-  only:
-    - master
-
