@@ -1,5 +1,9 @@
 image: php:7.1
 
+variables:
+  ROOT_DIRECTORY: "/var/www/developmentstudio.nl"
+  SSH_COMMAND: "ssh -p22 developmentstudio@vmweb01.developmentstudio.nl"
+
 stages:
   - tests
   - deploy
@@ -11,6 +15,10 @@ before_script:
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
   - mv composer.phar /usr/local/bin/composer
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - mkdir -p ~/.ssh
+  - eval $(ssh-agent -s)
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
 run_unit_tests:
   stage: tests
@@ -27,6 +35,13 @@ deploy_to_production:
   script:
     - composer install --no-dev
     - zip -r app.zip ./vendor ./public
+    - ssh-add < (echo "$PRODUCTION_SSH_PRIVATE_KEY")
+    - scp -P22 app.zip developmentstudio@vmweb01.developmentstudio.nl:$ROOT_DIRECTORY
+    - SSH_COMMAND "unzip $ROOT_DIRECTORY/app.zip -d app_new"
+    - SSH_COMMAND "mv $ROOT_DIRECTORY/app $ROOT_DIRECTORY/app_old"
+    - SSH_COMMAND "mv $ROOT_DIRECTORY/app_new $ROOT_DIRECTORY/app"
+    - SSH_COMMAND "rm -rf $ROOT_DIRECTORY/app_old"
+    - SSH_COMMAND "rm $ROOT_DIRECTORY/app.zip"
   only:
     - master
   artifacts:
