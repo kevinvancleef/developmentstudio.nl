@@ -1,7 +1,7 @@
 image: php:7.1
 
 variables:
-  ROOT_DIRECTORY: "/var/www/developmentstudio.nl"
+  WWW_DIRECTORY: "/var/www/developmentstudio"
   SSH_COMMAND: "ssh -p22 developmentstudio@vmweb01.developmentstudio.nl"
 
 stages:
@@ -31,20 +31,20 @@ deploy_to_production:
     name: production
     url: http://www.developmentstudio.nl
   stage: deploy
-  when: manual
   script:
     - composer install --no-dev
     - zip -r app.zip ./vendor ./public
-    - ssh-add < (echo "$PRODUCTION_SSH_PRIVATE_KEY")
-    - scp -P22 app.zip developmentstudio@vmweb01.developmentstudio.nl:$ROOT_DIRECTORY
-    - SSH_COMMAND "unzip $ROOT_DIRECTORY/app.zip -d app_new"
-    - SSH_COMMAND "mv $ROOT_DIRECTORY/app $ROOT_DIRECTORY/app_old"
-    - SSH_COMMAND "mv $ROOT_DIRECTORY/app_new $ROOT_DIRECTORY/app"
-    - SSH_COMMAND "rm -rf $ROOT_DIRECTORY/app_old"
-    - SSH_COMMAND "rm $ROOT_DIRECTORY/app.zip"
+    - ssh-add <(echo "$PRODUCTION_SSH_PRIVATE_KEY")
+    - scp app.zip developmentstudio@vmweb01.developmentstudio.nl:~/app.zip
+    - SSH_COMMAND "unzip ~/app.zip -d developmentstudio.nl"
+    - SSH_COMMAND "mv $WWW_DIRECTORY/developmentstudio.nl ~/developmentstudio.nl_old"
+    - SSH_COMMAND "mv ~/developmentstudio.nl $WWW_DIRECTORY/developmentstudio.nl"
+    - SSH_COMMAND "rm -rf ~/developmentstudio.nl_old"
+    - SSH_COMMAND "rm ~/app.zip"
   only:
     - master
   artifacts:
     paths:
       - public/
       - vendor/
+    expire_in: 1 year
